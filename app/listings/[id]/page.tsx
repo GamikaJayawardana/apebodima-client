@@ -1,12 +1,12 @@
-// src/app/listings/[id]/page.tsx
+// app/listings/[id]/page.tsx
 "use client";
 
 import { useGetListingById } from '@/lib/api/listingService';
-import { useParams } as NextParams from 'next/navigation'; // Renamed to avoid conflict
+// FIX: Corrected the import syntax for 'as'
+import { useParams as NextParams } from 'next/navigation';
 import { Metadata } from 'next';
 
-
-
+// This is the Client Component
 export default function ListingDetailPage() {
     const params = NextParams();
     const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -61,38 +61,40 @@ export default function ListingDetailPage() {
             </div>
         </div>
     );
+}
 
-    export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-        try {
-            // Fetch data directly from your API for metadata
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/listings/${params.id}`);
-            const listing = await response.json();
-
-            if (!listing) {
-                return { title: 'Listing Not Found' };
-            }
-
-            // Return SEO-optimized metadata
-            return {
-                title: `${listing.title} in ${listing.city} - ApeBodima.lk`,
-                description: listing.description.substring(0, 160), // Truncate description
-                openGraph: {
-                    title: listing.title,
-                    description: listing.description.substring(0, 160),
-                    images: [
-                        {
-                            url: listing.imageUrls[0] || 'https.../default-image.png',
-                        },
-                    ],
-                },
-            };
-        } catch (error) {
-            console.error('Failed to generate metadata', error);
-            return { title: 'Error', description: 'Could not load listing details.' };
+// FIX: generateMetadata is now a separate, exported server-side function.
+// It must be outside the component function.
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+    try {
+        // Fetch data directly from your API for metadata
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/listings/${params.id}`);
+        // Ensure you handle non-JSON responses or errors gracefully
+        if (!response.ok) {
+            return { title: 'Listing Not Found' };
         }
-    }
+        const listing = await response.json();
 
-    export default function ListingDetailPage() {
-        // ... (all the client-side code with hooks stays the same)
+        if (!listing) {
+            return { title: 'Listing Not Found' };
+        }
+
+        // Return SEO-optimized metadata
+        return {
+            title: `${listing.title} in ${listing.city} - ApeBodima.lk`,
+            description: listing.description.substring(0, 160), // Truncate description
+            openGraph: {
+                title: listing.title,
+                description: listing.description.substring(0, 160),
+                images: [
+                    {
+                        url: listing.imageUrls[0] || 'https.../default-image.png',
+                    },
+                ],
+            },
+        };
+    } catch (error) {
+        console.error('Failed to generate metadata', error);
+        return { title: 'Error', description: 'Could not load listing details.' };
     }
 }

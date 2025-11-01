@@ -1,6 +1,8 @@
-// src/app/dashboard/page.tsx
+// app/dashboard/page.tsx
 "use client";
 
+// FIX: Added 'useEffect' to the import
+import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useForm } from 'react-hook-form';
 import api from '@/lib/api';
@@ -22,8 +24,9 @@ export default function DashboardProfilePage() {
         if (user) {
             setValue('firstName', user.firstName);
             setValue('lastName', user.lastName);
-            setValue('contactNo', user.contactNo);
-            setValue('address', user.address);
+            // FIX: Check if properties exist before setting
+            setValue('contactNo', user.contactNo || '');
+            setValue('address', user.address || '');
         }
     }, [user, setValue]);
 
