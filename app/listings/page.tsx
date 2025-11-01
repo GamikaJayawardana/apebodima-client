@@ -1,4 +1,3 @@
-// app/listings/page.tsx
 "use client";
 
 import { useSearchListings, Listing } from '@/lib/api/listingService';
@@ -6,28 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import React from 'react';
 
-// FIX: Added the ListingCard component definition, which was missing.
+// You can re-use the ListingCard component here or define it in its own file
 function ListingCard({ listing }: { listing: Listing }) {
-    return (
-        <Link
-            href={`/listings/${listing.id}`}
-            className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-        >
-            <img
-                src={listing.imageUrls[0] || 'https://via.placeholder.com/400x300'}
-                alt={listing.title}
-                className="w-full h-48 object-cover"
-            />
-            <div className="p-4">
-                <h3 className="text-lg font-bold">{listing.title}</h3>
-                <p className="text-gray-600">{listing.city}</p>
-                <p className="text-xl font-bold text-blue-600 mt-2">
-                    LKR {listing.rentAmount.toLocaleString()} / month
-                </p>
-                <p className="text-sm text-gray-500">{listing.bedrooms} Bedrooms</p>
-            </div>
-        </Link>
-    );
+    // ... (same as in Home component)
 }
 
 // This component wraps the page to allow use of useSearchParams
@@ -44,8 +24,8 @@ function SearchPage() {
     const city = searchParams.get('city') || undefined;
     const propertyType = searchParams.get('propertyType') || undefined;
 
-    // FIX: Removed the trailing underscore `_` from this line
-    const { data, isLoading, error } = useSearchListings({
+    // You would also get page, minRent, etc. from searchParams
+    const { data, isLoading, error }_ = useSearchListings({
         city,
         propertyType,
         page: 0,
@@ -69,7 +49,7 @@ function SearchPage() {
                 ))}
             </div>
 
-            {data?.content && data.content.length === 0 && (
+            {data?.content.length === 0 && (
                 <p>No listings found matching your criteria.</p>
             )}
 
